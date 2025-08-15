@@ -2,7 +2,7 @@ import React, { Suspense, useEffect } from 'react'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import './App.css'
 import { Home, Collections, Product, Cart, Checkout, About } from './Routes'
-import { useCart } from './lib/cart'
+import { useCart } from './lib/cart.jsx'
 
 function Header() {
   const cart = useCart()
