@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { fetchProducts } from '../lib/api'
 import ProductCard from '../components/ProductCard'
+import TestimonialCarousel from '../components/TestimonialCarousel'
 import { Helmet } from 'react-helmet-async'
 
 export default function Home() {
@@ -65,6 +66,12 @@ export default function Home() {
               </Link>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="mt-16 md:mt-24">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <TestimonialCarousel />
         </div>
       </section>
     </div>
