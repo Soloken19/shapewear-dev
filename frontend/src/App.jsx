@@ -1,9 +1,8 @@
-import React, { lazy, Suspense, useEffect } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import './App.css'
-
-const Home = lazy(() => import('./pages/Home'))
-const Collections = lazy(() => import('./pages/Collections'))
+import { Home, Collections, Product, Cart, Checkout, About } from './Routes'
+import { CartProvider, useCart } from './lib/cart'
 
 function App() {
   const location = useLocation()
