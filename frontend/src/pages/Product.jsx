@@ -1,101 +1,198 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { fetchProduct } from '../lib/api'
-import { useCart } from '../lib/cart'
+import { useCart } from '../lib/cart.jsx'
 import SizeSelector from '../components/SizeSelector'
-import BeforeAfterSlider from '../components/BeforeAfterSlider'
 import FabricInfoModal from '../components/FabricInfoModal'
-import { Helmet } from 'react-helmet-async'
+import BeforeAfterSlider from '../components/BeforeAfterSlider'
 
 export default function Product() {
   const { slug } = useParams()
-  const { add } = useCart()
-  const [data, setData] = useState(null)
+  const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [size, setSize] = useState('')
-  const [color, setColor] = useState('')
+  const [error, setError] = useState(null)
+  const [selectedSize, setSelectedSize] = useState('')
+  const [selectedColor, setSelectedColor] = useState('')
   const [qty, setQty] = useState(1)
-  const [modalOpen, setModalOpen] = useState(false)
+  const [showFabricModal, setShowFabricModal] = useState(false)
+  const cart = useCart()
 
   useEffect(() => {
-    setLoading(true)
     fetchProduct(slug)
-      .then(d => setData(d.product))
-      .catch(e => setError(e.message))
+      .then(data => {
+        setProduct(data.product)
+        setSelectedSize(data.product.sizes[0] || '')
+        setSelectedColor(data.product.colors[0] || '')
+      })
+      .catch(err => setError(err.message))
       .finally(() => setLoading(false))
   }, [slug])
 
-  const canAdd = useMemo(() => size && color && qty > 0, [size, color, qty])
-
-  if (loading) return <div className="p-8">Loading…</div>
-  if (error) return <div className="p-8 text-red-600">{error}</div>
-  if (!data) return null
-
-  const onAdd = () => {
-    if (!canAdd) return
-    add({ id: data.id, slug: data.slug, name: data.name, price: data.price, qty, size, color })
-    console.log('track:add_to_cart', { slug: data.slug, size, color, qty })
+  const handleAddToCart = () => {
+    if (!product || !selectedSize || !selectedColor) return
+    cart.add({
+      id: product.id,
+      slug: product.slug,
+      name: product.name,
+      price: product.price,
+      qty,
+      size: selectedSize,
+      color: selectedColor
+    })
+    // Simple feedback - could be enhanced with toast/modal
+    alert('Added to cart!')
   }
 
+  if (loading) return <div className="p-8">Loading product...</div>
+  if (error) return <div className="p-8 text-red-600">Error: {error}</div>
+  if (!product) return <div className="p-8">Product not found</div>
+
+  const avgRating = product.reviews?.length > 0 
+    ? (product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length).toFixed(1)
+    : null
+
   return (
-    <div>
-      <Helmet>
-        <title>{data.name} — CurveCraft</title>
-        <meta name="description" content={data.description} />
-      </Helmet>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid md:grid-cols-2 gap-8">
-        <div>
-          <div className="aspect-[4/5] bg-neutral-100 rounded-xl overflow-hidden">
-            <BeforeAfterSlider before={data.images.before || '/placeholder.svg'} after={data.images.after || '/placeholder.svg'} alt={data.name} />
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="grid lg:grid-cols-2 gap-12">
+        {/* Images */}
+        <div className="space-y-4">
+          <div className="aspect-[3/4] bg-neutral-100 rounded-lg overflow-hidden">
+            <img 
+              src={product.images?.primary || '/placeholder.svg'} 
+              alt={product.name}
+              className="w-full h-full object-cover"
+            />
           </div>
-          <div className="mt-3 grid grid-cols-4 gap-2">
-            {data.images.gallery?.map((src, i) => (
-              <img key={i} src={src} alt={`${data.name} ${i+1}`} loading="lazy" className="w-full h-24 object-cover rounded-lg bg-neutral-100" onError={(e)=>{e.currentTarget.src='/placeholder.svg'}} />
-            ))}
-          </div>
+          {product.images?.before && product.images?.after && (
+            <BeforeAfterSlider 
+              beforeImage={product.images.before}
+              afterImage={product.images.after}
+            />
+          )}
         </div>
-        <div>
-          <h1 className="font-display text-3xl leading-tight">{data.name}</h1>
-          <div className="mt-2 text-neutral-700">${data.price.toFixed(2)}</div>
-          <p className="mt-4 text-neutral-700">{data.description}</p>
 
-          <div className="mt-6">
-            <div className="text-sm font-medium mb-2">Size</div>
-            <SizeSelector sizes={data.sizes} value={size} onChange={setSize} />
-            <p className="text-xs text-neutral-600 mt-2">Tip: If between sizes, size up for comfort.</p>
+        {/* Product Info */}
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-3xl font-display tracking-tight">{product.name}</h1>
+            <div className="flex items-center gap-4 mt-2">
+              <span className="text-2xl font-medium">${product.price}</span>
+              {avgRating && (
+                <div className="flex items-center gap-1 text-sm text-neutral-600">
+                  <span>★</span>
+                  <span>{avgRating}</span>
+                  <span>({product.reviews.length} reviews)</span>
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="mt-4">
-            <div className="text-sm font-medium mb-2">Color</div>
+          <p className="text-neutral-700 leading-relaxed">{product.description}</p>
+
+          {/* Size Selection */}
+          <div>
+            <label className="block text-sm font-medium mb-2">Size</label>
+            <SizeSelector 
+              sizes={product.sizes}
+              selected={selectedSize}
+              onChange={setSelectedSize}
+            />
+          </div>
+
+          {/* Color Selection */}
+          <div>
+            <label className="block text-sm font-medium mb-2">Color</label>
             <div className="flex gap-2">
-              {data.colors.map(c => (
-                <button key={c} onClick={() => setColor(c)} aria-pressed={color===c} className={`w-8 h-8 rounded-full border ${color===c? 'ring-2 ring-black' : ''}`} title={c}></button>
+              {product.colors.map(color => (
+                <button
+                  key={color}
+                  onClick={() => setSelectedColor(color)}
+                  className={`px-4 py-2 text-sm border rounded-md transition-colors ${
+                    selectedColor === color 
+                      ? 'border-neutral-900 bg-neutral-900 text-white' 
+                      : 'border-neutral-300 hover:border-neutral-400'
+                  }`}
+                >
+                  {color}
+                </button>
               ))}
             </div>
           </div>
 
-          <div className="mt-4 flex items-center gap-3">
-            <label className="text-sm" htmlFor="qty">Qty</label>
-            <input id="qty" type="number" min="1" value={qty} onChange={e=>setQty(Math.max(1, Number(e.target.value)||1))} className="w-20 border rounded-full px-3 py-2 text-sm" />
-            <button onClick={() => setModalOpen(true)} className="btn btn-ghost">Fabric & Care</button>
+          {/* Quantity */}
+          <div>
+            <label className="block text-sm font-medium mb-2">Quantity</label>
+            <select 
+              value={qty} 
+              onChange={(e) => setQty(Number(e.target.value))}
+              className="border border-neutral-300 rounded-md px-3 py-2"
+            >
+              {[1,2,3,4,5].map(n => (
+                <option key={n} value={n}>{n}</option>
+              ))}
+            </select>
           </div>
 
-          <div className="mt-6 flex gap-3">
-            <button disabled={!canAdd} onClick={onAdd} className="btn btn-primary disabled:opacity-50">Add to Cart</button>
-            <button className="btn btn-ghost" onClick={()=>console.log('track:cta_buy_now',{slug:data.slug})}>Buy Now</button>
+          {/* Add to Cart */}
+          <button
+            onClick={handleAddToCart}
+            disabled={!selectedSize || !selectedColor}
+            className="w-full bg-neutral-900 text-white py-3 px-6 rounded-md font-medium hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Add to Cart
+          </button>
+
+          {/* Product Details */}
+          <div className="space-y-4 pt-6 border-t border-neutral-200">
+            <div>
+              <h3 className="font-medium mb-2">Compression Level</h3>
+              <p className="text-sm text-neutral-600">{product.compression}</p>
+            </div>
+            
+            <div>
+              <h3 className="font-medium mb-2">Fabric & Care</h3>
+              <button 
+                onClick={() => setShowFabricModal(true)}
+                className="text-sm text-neutral-600 underline hover:text-neutral-900"
+              >
+                View fabric details
+              </button>
+            </div>
           </div>
+
+          {/* Reviews */}
+          {product.reviews?.length > 0 && (
+            <div className="pt-6 border-t border-neutral-200">
+              <h3 className="font-medium mb-4">Customer Reviews</h3>
+              <div className="space-y-4">
+                {product.reviews.map((review, idx) => (
+                  <div key={idx} className="border-l-2 border-neutral-100 pl-4">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-medium text-sm">{review.user}</span>
+                      <div className="flex">
+                        {Array.from({length: 5}, (_, i) => (
+                          <span key={i} className={`text-sm ${i < review.rating ? 'text-yellow-400' : 'text-neutral-300'}`}>
+                            ★
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-sm text-neutral-600">{review.comment}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
-      <FabricInfoModal open={modalOpen} onClose={() => setModalOpen(false)} fabric={data.fabric} />
-
-      <div className="fixed md:hidden left-0 right-0 bottom-0 border-t border-black/10 bg-white/95 backdrop-blur p-4">
-        <div className="max-w-7xl mx-auto flex items-center gap-3">
-          <div className="font-medium">${data.price.toFixed(2)}</div>
-          <button disabled={!canAdd} onClick={onAdd} className="btn btn-primary flex-1">Add to Cart</button>
-        </div>
-      </div>
+      {/* Fabric Modal */}
+      {showFabricModal && (
+        <FabricInfoModal 
+          fabric={product.fabric}
+          onClose={() => setShowFabricModal(false)}
+        />
+      )}
     </div>
   )
 }
