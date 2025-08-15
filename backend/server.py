@@ -102,6 +102,18 @@ def _seed_products():
     common_sizes = ["XS", "S", "M", "L", "XL", "2XL", "3XL"]
     nude_palette = ["Sand", "Almond", "Mocha", "Espresso", "Black", "Blush"]
 
+    # Curated external images (Unsplash/Pexels) for demo use
+    u1 = "https://images.unsplash.com/photo-1498137718264-3b05ac1d1b2a"
+    u2 = "https://images.unsplash.com/photo-1631177066873-5048fbbad9f1"
+    u3 = "https://images.unsplash.com/photo-1631177067264-23788a876d9a"
+    p4 = "https://images.pexels.com/photos/8783527/pexels-photo-8783527.jpeg"
+    p5 = "https://images.pexels.com/photos/8783523/pexels-photo-8783523.jpeg"
+    p6 = "https://images.pexels.com/photos/8783485/pexels-photo-8783485.jpeg"
+    p7 = "https://images.pexels.com/photos/7065467/pexels-photo-7065467.jpeg"
+    p8 = "https://images.pexels.com/photos/4926693/pexels-photo-4926693.jpeg"
+    p9 = "https://images.pexels.com/photos/7091854/pexels-photo-7091854.jpeg"
+    p10 = "https://images.pexels.com/photos/17207356/pexels-photo-17207356.jpeg"
+
     PRODUCTS = [
         p(
             name="SculptFit Seamless Bodysuit",
@@ -118,14 +130,10 @@ def _seed_products():
                 care="Machine wash cold, lay flat to dry",
             ),
             images={
-                "primary": "/images/bodysuit1.jpg",
-                "gallery": [
-                    "/images/bodysuit1.jpg",
-                    "/images/bodysuit1_alt1.jpg",
-                    "/images/bodysuit1_alt2.jpg",
-                ],
-                "before": "/images/bodysuit_before.jpg",
-                "after": "/images/bodysuit_after.jpg",
+                "primary": u2,
+                "gallery": [u2, p8, p9],
+                "before": u3,
+                "after": u2,
             },
             reviews=[
                 Review(user="Maya", rating=5, comment="Sculpting without the squeeze. Love it!"),
@@ -147,13 +155,10 @@ def _seed_products():
                 care="Machine wash cold, lay flat to dry",
             ),
             images={
-                "primary": "/images/shorts1.jpg",
-                "gallery": [
-                    "/images/shorts1.jpg",
-                    "/images/shorts1_alt1.jpg",
-                ],
-                "before": "/images/shorts_before.jpg",
-                "after": "/images/shorts_after.jpg",
+                "primary": p9,
+                "gallery": [p9, p6, p7],
+                "before": p6,
+                "after": p9,
             },
             reviews=[
                 Review(user="Zoe", rating=5, comment="No rolling! Wore to a wedding and forgot I had them on."),
@@ -174,13 +179,10 @@ def _seed_products():
                 care="Spot clean",
             ),
             images={
-                "primary": "/images/waist1.jpg",
-                "gallery": [
-                    "/images/waist1.jpg",
-                    "/images/waist1_alt1.jpg",
-                ],
-                "before": "/images/waist_before.jpg",
-                "after": "/images/waist_after.jpg",
+                "primary": p7,
+                "gallery": [p7, p9],
+                "before": u3,
+                "after": p7,
             },
             reviews=[
                 Review(user="Gia", rating=4, comment="Great support, easy to adjust."),
@@ -201,13 +203,10 @@ def _seed_products():
                 care="Machine wash cold, lay flat to dry",
             ),
             images={
-                "primary": "/images/bodysuit2.jpg",
-                "gallery": [
-                    "/images/bodysuit2.jpg",
-                    "/images/bodysuit2_alt1.jpg",
-                ],
-                "before": "/images/bodysuit2_before.jpg",
-                "after": "/images/bodysuit2_after.jpg",
+                "primary": p8,
+                "gallery": [p8, u2],
+                "before": u3,
+                "after": p8,
             },
             reviews=[
                 Review(user="Rae", rating=5, comment="Invisible under everything. Confidence booster!"),
@@ -228,13 +227,10 @@ def _seed_products():
                 care="Machine wash cold, lay flat to dry",
             ),
             images={
-                "primary": "/images/shorts2.jpg",
-                "gallery": [
-                    "/images/shorts2.jpg",
-                    "/images/shorts2_alt1.jpg",
-                ],
-                "before": "/images/shorts2_before.jpg",
-                "after": "/images/shorts2_after.jpg",
+                "primary": p6,
+                "gallery": [p6, p9],
+                "before": p6,
+                "after": p9,
             },
             reviews=[
                 Review(user="Naya", rating=4, comment="Perfect for daily wear."),
@@ -255,13 +251,10 @@ def _seed_products():
                 care="Machine wash cold, lay flat to dry",
             ),
             images={
-                "primary": "/images/bodysuit3.jpg",
-                "gallery": [
-                    "/images/bodysuit3.jpg",
-                    "/images/bodysuit3_alt1.jpg",
-                ],
-                "before": "/images/bodysuit3_before.jpg",
-                "after": "/images/bodysuit3_after.jpg",
+                "primary": p4,
+                "gallery": [p4, u2],
+                "before": u3,
+                "after": p4,
             },
             reviews=[
                 Review(user="Ivy", rating=5, comment="So flattering and comfy!"),
