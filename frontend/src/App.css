@@ -1,0 +1,15 @@
+/* Global component styles */
+.hero {
+  background: radial-gradient(1200px 600px at 80% -10%, rgba(237, 231, 225, 0.8), transparent),
+              radial-gradient(800px 400px at 10% 0%, rgba(230, 210, 200, 0.6), transparent);
+}
+
+.img-fade {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+.img-fade.loaded {
+  opacity: 1;
+  transform: translateY(0);
+}
