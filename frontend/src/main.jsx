@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { HelmetProvider } from 'react-helmet-async'
 import App from './App'
 import './index.css'
-import { CartProvider } from './lib/cart'
+import { CartProvider } from './lib/cart.jsx'
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
