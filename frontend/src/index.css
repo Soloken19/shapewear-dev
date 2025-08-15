@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --nude: 27 32% 86%;
+  --blush: 8 52% 86%;
+  --espresso: 24 9% 21%;
+  --page: 30 33% 98%;
+  --ink: 24 10% 12%;
+}
+
+html, body, #root { height: 100%; }
+
+@layer base {
+  body { @apply antialiased; }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-medium transition-colors;
+  }
+  .btn-primary {
+    @apply bg-neutral-900 text-white hover:bg-neutral-800;
+  }
+  .btn-ghost { @apply hover:bg-black/5; }
+  .card { @apply rounded-2xl bg-white shadow-soft border border-black/5; }
+}
